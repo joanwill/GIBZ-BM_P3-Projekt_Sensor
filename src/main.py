@@ -27,12 +27,19 @@ def connect_mqtt() -> mqtt_client:
     client.connect(mqtt_broker, mqtt_port)
     return client
 
+def save_json(filename, data):
+    file = open(filename, 'a')
+    file.write(data)
+    file.close()
+
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received '{msg.payload.decode()}' from '{msg.topic}' topic")
+        save_json("raw.json", msg.payload.decode())
     client.subscribe(mqtt_topic)
     client.on_message = on_message
 
+# Main part of script
 if __name__ == "__main__":
     client = connect_mqtt()
     subscribe(client)

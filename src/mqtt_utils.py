@@ -16,6 +16,10 @@ mqtt_id = f'subscribe{random.randint(0, 100)}'
 mqtt_username = "haus@vebl-network"
 mqtt_password = os.getenv('MQTT_PW')
 
+def save_json(filename, data):
+    with open(filename, 'w') as file:
+        file.write(data)
+
 def connect_mqtt() -> mqtt_client.Client:
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -30,10 +34,14 @@ def connect_mqtt() -> mqtt_client.Client:
 
 def subscribe(client: mqtt_client.Client):
     def on_message(client, userdata, msg):
-        print(f"📩 Received '{msg.payload.decode()}' from '{msg.topic}'")
+        print(f"Received '{msg.payload.decode()}' from '{msg.topic}'")
         save_json("raw.json", msg.payload.decode())
+    
+    def on_subscribe(client, userdata, mid, granted_qos):
+        print(f"✅ Subscribed to {mqtt_topic} with QoS {granted_qos}")
 
     client.subscribe(mqtt_topic)
+    client.on_subscribe = on_subscribe
     client.on_message = on_message
 
 def loop_mqtt():
@@ -41,5 +49,3 @@ def loop_mqtt():
     subscribe(client)
     client.connect(mqtt_broker, mqtt_port)
     client.loop_start()
-
-    # Run the network loop in executor to avoid blocking the event loop

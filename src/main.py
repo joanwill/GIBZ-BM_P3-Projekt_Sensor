@@ -3,6 +3,7 @@ import os
 import asyncio
 import uvicorn
 import mqtt_utils as mqtt_utils
+import api_utils as api_utils
 
 from sql_utils import create_tables
 from fastapi import FastAPI
@@ -22,8 +23,8 @@ def startup_event():
 # FastAPI route
 @app.get("/")
 async def read_root():
-    return {"message": "FastAPI works!"}
-
+    return api_utils.get_latest_device()
+            
 def run_server():
     uvicorn.run(
         "main:app",

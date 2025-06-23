@@ -4,9 +4,12 @@ import asyncio
 import uvicorn
 import mqtt_utils as mqtt_utils
 
+from sql_utils import create_tables
 from fastapi import FastAPI
 
 app = FastAPI()
+
+create_tables()
 
 mqtt_client_instance = mqtt_utils.connect_mqtt()
 mqtt_utils.subscribe(mqtt_client_instance)

@@ -1,8 +1,11 @@
 import random
 import os
+import json
+import sqlite3
 
 from dotenv import load_dotenv
 from paho.mqtt import client as mqtt_client
+from sql_utils import insert_payload_data
 
 load_dotenv()
 
@@ -27,15 +30,10 @@ def connect_mqtt() -> mqtt_client:
     client.connect(mqtt_broker, mqtt_port)
     return client
 
-def save_json(filename, data):
-    file = open(filename, 'a')
-    file.write(data)
-    file.close()
-
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received '{msg.payload.decode()}' from '{msg.topic}' topic")
-        save_json("raw.json", msg.payload.decode())
+        insert_payload_data(json.loads(msg.payload.decode()))
     client.subscribe(mqtt_topic)
     client.on_message = on_message
 

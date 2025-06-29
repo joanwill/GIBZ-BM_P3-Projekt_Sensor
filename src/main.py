@@ -3,7 +3,7 @@ import os
 import asyncio
 import uvicorn
 import mqtt_utils as mqtt_utils
-
+#Hallo
 from sql_utils import create_tables
 from fastapi import FastAPI
 
